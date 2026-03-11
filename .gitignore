@@ -1,0 +1,8 @@
+# Personal medical records - never commit
+personal/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
