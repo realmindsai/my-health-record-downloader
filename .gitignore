@@ -1,8 +1,19 @@
 # Personal medical records - never commit
 personal/
 
+# Secrets
+.env
+
+# Databases
+*.db
+*.db-wal
+*.db-shm
+
 # Python
 __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+
+# Token storage
+.whoop/
