@@ -17,3 +17,6 @@ __pycache__/
 
 # Token storage
 .whoop/
+
+# Health sync credentials
+.health-sync/
