@@ -56,10 +56,13 @@ def _dismiss_stay_logged_in(page: Page) -> None:
             break
 
 
+_DEFAULT_OUTPUT_DIR = Path(__file__).parent / "personal" / "incoming"
+
+
 def download_documents(
     home_url: str = PORTAL_HOME,
     back_url: str = PORTAL_BACK,
-    output_dir: Path = Path.home() / "Downloads" / "medical_records",
+    output_dir: Path = _DEFAULT_OUTPUT_DIR,
     headless: bool = False,
     wait_for_login: bool = False,
 ) -> dict:
@@ -156,8 +159,14 @@ def download_documents(
                 page.goto(back_url, wait_until="networkidle")
                 continue
 
-            # Save to disk
+            # Save to disk — skip if already downloaded
             filepath = output_dir / filename
+            if filepath.exists():
+                click.echo(f"    SKIP - already exists: {filename}")
+                result["skipped"] += 1
+                result["skipped_indices"].append(i + 1)
+                page.goto(back_url, wait_until="networkidle")
+                continue
             filepath.write_bytes(response.body())
             click.echo(f"    SAVED {filename} ({len(response.body())} bytes)")
             result["downloaded"] += 1
@@ -178,7 +187,7 @@ def download_documents(
 @click.option(
     "--output-dir",
     type=click.Path(),
-    default=str(Path.home() / "Downloads" / "medical_records"),
+    default=str(_DEFAULT_OUTPUT_DIR),
     help="Directory to save downloaded PDFs.",
 )
 @click.option(

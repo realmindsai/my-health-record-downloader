@@ -19,8 +19,12 @@ uv sync
 uv run playwright install chromium
 
 # Run the My Health Record downloader (opens browser for myGov login)
+# Downloads to personal/incoming/ by default; skips already-downloaded files
 uv run python my_health_record_downloader.py
-uv run python my_health_record_downloader.py --output-dir ~/Documents/medical
+uv run python my_health_record_downloader.py --output-dir /path/to/incoming
+
+# Organize downloaded records into date-sorted symlinks in personal/organized/
+uv run python organize_records.py
 
 # Build the medical results database from PDFs in personal/
 uv run python build_test_db.py
@@ -54,6 +58,8 @@ cd whoop_mcp && uv run pytest               # whoop tests
 
 - **Three independent Python projects**: Root uses `pyproject.toml` with playwright + click. `garmin_mcp/` and `whoop_mcp/` are separate projects with their own `pyproject.toml`, `uv.lock`, and `.venv`. They don't share dependencies.
 - **`personal/` is gitignored**: Contains actual medical records, PDFs, and the `medical_results.db`. Never commit this directory.
+- **`personal/incoming/`**: Raw downloads from the portal. Downloader targets this dir and skips files that already exist there.
+- **`personal/organized/`**: Symlinks named `YYYY-MM-DD_ReportType_NN.pdf` pointing to `../incoming/`. Run `organize_records.py` after downloading to populate.
 - **Tests use a local HTTP server**: The downloader tests spin up a `FakePortalHandler` that simulates the My Health Record portal structure. Tests run headless Playwright against it — no real portal access needed.
 - **Garmin auth flow**: Garmin's SSO endpoint is Cloudflare-blocked for programmatic access. `browser_auth.py` opens a real browser, captures the SSO ticket, and exchanges it for OAuth tokens stored at `~/.garminconnect`.
 - **WHOOP auth flow**: Standard OAuth2 Authorization Code Grant. `whoop-auth` CLI opens a browser, user logs in at WHOOP, local callback server catches the redirect, exchanges for tokens stored at `~/.whoop/tokens.json`. Access tokens expire hourly; the client auto-refreshes using the refresh token.
