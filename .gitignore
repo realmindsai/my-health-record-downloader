@@ -11,12 +11,26 @@ personal/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
 .venv/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
 
 # Token storage
 .whoop/
 
 # Health sync credentials
 .health-sync/
+
+# OS
+.DS_Store
+
+# Runtime
+.cache/
+.superpowers/
