@@ -22,12 +22,6 @@ __pycache__/
 build/
 dist/
 
-# Token storage
-.whoop/
-
-# Health sync credentials
-.health-sync/
-
 # OS
 .DS_Store
 
